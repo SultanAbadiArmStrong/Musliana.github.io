@@ -1,14 +1,29 @@
-from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
+from flask import render_template, request, redirect, url_for, flash
+from app import app
 
-app = Flask(__name__)
-app.secret_key = 'your_secret_key'
+# Halaman Utama
+@app.route('/')
+def index():
+    return render_template('index.html')
 
-# Konfigurasi database SQLite
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///pertanian.db'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+# Dashboard Petani
+@app.route('/petani')
+def petani_dashboard():
+    return render_template('petani_dashboard.html')
 
-# Inisialisasi database
-db = SQLAlchemy(app)
+# Dashboard Administrator
+@app.route('/admin')
+def admin_dashboard():
+    return render_template('admin_dashboard.html')
 
-from app import routes, models
+# Fitur Rekomendasi Tanaman
+@app.route('/rekomendasi', methods=['POST'])
+def rekomendasi():
+    lokasi = request.form.get('lokasi')
+    jenis_tanah = request.form.get('jenis_tanah')
+    # Contoh logika sederhana
+    if jenis_tanah == 'Lempung' and lokasi == 'Dataran Rendah':
+        rekomendasi = 'Padi, Jagung'
+    else:
+        rekomendasi = 'Tanaman Tidak Dikenali'
+    return render_template('petani_dashboard.html', rekomendasi=rekomendasi)
